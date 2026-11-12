@@ -1,31 +1,38 @@
 
 import { Link } from "react-router";
-import { useEffectEvent, useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronRight, Compass, Flame, Sparkles } from "lucide-react";
 import { Button } from "../ui/button";
 import FeatureCrousel from "../FeatureCrousel";
+import axios from "axios";
 
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [featuredEvents, setFeaturedEvents] = useState([]);
-  useEffectEvent(() => {
-    async function getFeaturedEvents() {
-      setIsLoading(true);
-      try {
-        let {
-          data: { data },
-        } = await axios.get(
-          "https://eventsphere-server-mfdb.onrender.com/api/events/featured",
-        );
-      } catch (error) {
-      } finally {
-        setIsLoading(false);
-      }
+ useEffect(() => {
+  async function getFeaturedEvents() {
+    setIsLoading(true);
+    try {
+      const {
+        data: { data },
+      } = await axios.get(
+        "https://eventsphere-server-mfdb.onrender.com/api/events/featured",
+      );
+      console.log(data);
+      setFeaturedEvents(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
-    console.log(data);
-    getFeaturedEvents();
-  }, []);
+  }
+
+  getFeaturedEvents();
+}, []);
+
+
+
   return (
     <div className="space-y-16 pb-20">
       <section className="relative pt-12 pb-6 sm:pt-16 sm:pb-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

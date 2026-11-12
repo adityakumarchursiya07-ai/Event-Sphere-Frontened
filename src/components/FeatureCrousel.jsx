@@ -51,6 +51,7 @@ function FeatureCrousel({ events }) {
       <div className="overflow-hidden rounded-3xl" ref={emblaRef}>
         <div className="flex">
           {events.map((event) => {
+            // console.log(events);
             const eventId = event._id || event.id;
             return (
               <div
@@ -111,14 +112,14 @@ function FeatureCrousel({ events }) {
                     <div className="flex items-center gap-5 pt-2 text-xs sm:text-sm text-stone-300 font-medium flex-wrap">
                       <span className="flex items-center gap-1.5 text-orange-300 font-semibold">
                         <Calendar className="w-4 h-4" />
-                        {formatEventDate(event.startDate)}
+                        {/* {formatEventDate(event.startDate)} */}
                       </span>
                       <span className="flex items-center gap-1.5 text-stone-300">
                         <MapPin className="w-4 h-4 text-stone-400" />
                         {event.venue}, {event.city}
                       </span>
                       <span className="flex items-center gap-1.5 font-bold text-white bg-white/10 px-2.5 py-1 rounded-lg border border-white/10">
-                        {formatPrice(event.price, event.currency)}
+                        {/* {formatPrice(event.price, event.currency)} */}
                       </span>
                     </div>
 
