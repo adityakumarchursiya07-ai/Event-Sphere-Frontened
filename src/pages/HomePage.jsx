@@ -2,8 +2,8 @@
 import { Link } from "react-router";
 import { useEffect, useState } from "react";
 import { ChevronRight, Compass, Flame, Sparkles } from "lucide-react";
-import { Button } from "../ui/button";
-import FeatureCrousel from "../FeatureCrousel";
+import { Button } from "../components/ui/button";
+import FeatureCrousel from "../components/FeatureCrousel";
 import axios from "axios";
 
 

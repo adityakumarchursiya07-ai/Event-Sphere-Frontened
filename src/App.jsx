@@ -2,8 +2,9 @@
 import { Routes  , Route} from 'react-router'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import Notfound from './components/pages/Notfound'
-import HomePage from './components/pages/HomePage'
+import Notfound from './pages/Notfound'
+import HomePage from './pages/HomePage'
+import EventDetailsPage from './pages/EventDetailsPage'
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
       <div className="flex-1">
         <Routes>
           <Route path="/" element={<HomePage/>} />
+          <Route path="/event/id" element={<EventDetailsPage/>} />
           <Route path="*" element={<Notfound />} />
         </Routes>
       </div>
