@@ -13,7 +13,7 @@ import {
 import { Link } from "react-router";
 import { Badge } from "@/components/ui/badge";
 
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { formatEventDate, formatPrice } from "@/lib/utils";
 
 function FeatureCrousel({ events }) {
@@ -51,7 +51,7 @@ function FeatureCrousel({ events }) {
     <div className="relative group">
       <div className="overflow-hidden rounded-3xl" ref={emblaRef}>
         <div className="flex">
-          {events.map((event) => {
+          {events?.map?.((event) => {
             // console.log(events);
             const eventId = event._id || event.id;
             return (
@@ -169,7 +169,7 @@ function FeatureCrousel({ events }) {
       </button>
 
       <div className="absolute bottom-4 right-6 flex items-center gap-2 z-20">
-        {events.map((_, i) => (
+        {events?.map?.((_, i) => (
           <button
             key={i}
             onClick={() => scrollTo(i)}

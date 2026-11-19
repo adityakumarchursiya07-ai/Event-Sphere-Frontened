@@ -8,7 +8,7 @@ import {
   User,
 } from "lucide-react";
 import { Link } from "react-router";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 function Navbar() {
   return (
