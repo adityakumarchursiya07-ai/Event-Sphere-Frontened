@@ -19,3 +19,6 @@ const favouritelice = createSlice({
 
 export const { togelFavourites, removeFavourites, clearFavourites } = favouritelice.actions; // update state 
 export default favouritelice.reducer // connect with store
+
+
+
