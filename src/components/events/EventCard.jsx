@@ -1,8 +1,12 @@
 import { formatEventDate, formatPrice } from "@/lib/utils";
-// import { toggleFavorites } 
+import { toggelFavourites } from "@/store/slices/favouriteslice";
 import { Bookmark, Calendar } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
+  export function handelFavourite(e ,event ,dispatch) {
+    e.preventDefault();
+    dispatch(toggelFavourites(event));
+  }
 
 export default function EventCard({ event }) {
   const {
@@ -18,9 +22,11 @@ export default function EventCard({ event }) {
     category: { name },
   } = event;
 
-  // const dispatch = useDispatch();
-  // const state = useSelector((state) => state.favorites.name);
-  // console.log(state);
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state.favourite.items);
+
+ 
+  //
 
   return (
     <Link
@@ -41,10 +47,8 @@ export default function EventCard({ event }) {
             </span>
 
             <button
-              onClick={(e) => {
-                e.preventDefault();
-                dispatch(toggleFavorites("dhruv"));
-              }}
+              onClick={ (e)=>handelFavourite(e ,event , dispatch)
+              }
               type="button"
               className="pointer-events-auto w-8 h-8 rounded-full bg-white/90 backdrop-blur-md shadow-sm border border-black/5 flex items-center justify-center hover:bg-white hover:scale-110 active:scale-95 transition-all text-stone-700 hover:text-stone-900 cursor-pointer text-xs"
             >

@@ -1,3 +1,4 @@
+import { handelFavourite } from "@/components/events/EventCard";
 import EventReviewSection from "@/components/events/EventReviewSection";
 import api from "@/lib/axios";
 import {
@@ -18,6 +19,7 @@ import {
   Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link, useParams } from "react-router";
 import { toast } from "sonner";
 
@@ -33,6 +35,7 @@ export default function EventDetailsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [event, setEvent] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const dispatch = useDispatch()
 
   useEffect(() => {
     async function fetchEvent() {
@@ -96,6 +99,9 @@ export default function EventDetailsPage() {
 
           <button
             type="button"
+            onClick={(e) =>{
+             handelFavourite(e , event , dispatch)
+            }}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer bg-white border-[#DDD9CE] hover:bg-stone-50 text-stone-700"
           >
             <span>
