@@ -8,7 +8,7 @@ import { toast } from "sonner";
     e.preventDefault();
     dispatch(toggelFavourites(event));
     if(!isFavourite){
-  toast.success(`Saved "${event?.title}" to your collection!`)
+  toast.success(`Saved "${event?.title}" to your collection!` )
     }else{
  toast.info(`Removed "${event?.title}" from saved events`);
     }
@@ -32,7 +32,6 @@ export default function EventCard({ event }) {
   const  isFavourite = useSelector((state) => 
     state?.favourite?.items.some((e) =>  (e?.id || e?._id) === (event?.id || event?._id) ,)
   )
-console.log(isFavourite);
 
   const dispatch = useDispatch();
   const state = useSelector((state) => state.favourite.items);
