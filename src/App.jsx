@@ -25,7 +25,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/events/:slug" element={<EventDetailsPage />} />
-          <Route path="/events/:slug" element={<EventDetailsPage />} />
+          <Route path="/explore" element={<ExplorePage />} />
           <Route path="/favorites/" element={<FavoritesPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
