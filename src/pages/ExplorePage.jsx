@@ -1,25 +1,25 @@
 import Skeleton from "@/components/common/Skeleton";
 import EventCard from "@/components/events/EventCard";
 import EventFilterBar from "@/components/events/EventFilterBar";
+import { useEventFilter } from "@/hooks/useEventFilter";
 import api from "@/lib/axios";
-import { setisPaid, setFormat } from "@/store/slices/filterSlice";
 import { useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { useDispatch, useSelector } from "react-redux";
-import { useSearchParams } from "react-router";
 export default function ExplorePage() {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isMoreLoading, setIsMoreLoading] = useState(false);
   const dispatch = useDispatch();
-  const activeRequestId = useRef(0)
+  const activeRequestId = useRef(0);
   const [pagination, setPagination] = useState({
     page: 1,
     total: 0,
     hasMore: false,
   });
-  const filters = useSelector((state) => state.filters);
-  const [searchPram, setSearchparam] = useSearchParams();
+
+  const { filters, apiQueryString } = useEventFilter();
+
   async function fetchEvents(page = 1, append = false) {
     const thisRequestId = ++activeRequestId.current;
     if (page === 1) {
@@ -28,23 +28,13 @@ export default function ExplorePage() {
       setIsMoreLoading(true);
     }
 
-    const params = new URLSearchParams();
-    if(filters.format){
-      params.set("format", filters.format);
-    }
-
-    
-    if(filters.isPaid !== ""){
-      params.set("isPaid", String(filters.isPaid) );
-    }
-
-    params.set("page" ,page)
+    // params.set("page", page);
     try {
       const { data: events, pagination } = await api.get(
-        `/api/events?${params.toString()}`,
+        `/api/events?${apiQueryString()}&page=${page}`,
       );
-
-      if(thisRequestId !== activeRequestId.current){
+ 
+      if (thisRequestId !== activeRequestId.current) {
         return;
       }
 
@@ -59,28 +49,9 @@ export default function ExplorePage() {
     setIsMoreLoading(false);
   }
 
- 
-
   useEffect(() => {
-    const urlFormat = searchPram.get("format");
-    const urlisPaid = searchPram.get("isPaid");
-    if(urlFormat){
-      dispatch(setFormat(urlFormat))
-    }else{
-      dispatch(setFormat(""))
-    }
-
-    if(urlisPaid !== "" && urlisPaid !== null && urlisPaid !== undefined ){
-      dispatch(setisPaid(urlisPaid === "true" ? true : false))
-    }else{
-      dispatch(setisPaid(""))
-    }
-    console.log(urlisPaid);
-  }, [searchPram ,dispatch]);
-
-   useEffect(() => {
     fetchEvents(1, false);
-  }, [filters.format , filters.isPaid]);
+  }, [filters]);
 
   const { ref: observerRef, inView } = useInView({
     threshold: 0.5,
@@ -94,6 +65,8 @@ export default function ExplorePage() {
       return () => clearTimeout(timer);
     }
   }, [inView]);
+
+  
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 pb-20">

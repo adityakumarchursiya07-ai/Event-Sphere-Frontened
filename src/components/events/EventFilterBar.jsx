@@ -1,40 +1,39 @@
-import { setisPaid, setFormat } from "@/store/slices/filterSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { useSearchParams } from "react-router";
+import { useEventFilter } from "@/hooks/useEventFilter";
+import api from "@/lib/axios";
+import { useEffect, useMemo, useState } from "react";
 
 export default function EventFilterBar() {
-  const dispatch = useDispatch();
-  const filters = useSelector((state) => state.filters);
-  const [searchPram, setSearchparam] = useSearchParams();
-  // setSearchparam(params)
+  const { updatepram, serchParam, filters } = useEventFilter();
+  const [categories, setCategories] = useState([]);
 
-function updatepram (update){
- const params = new URLSearchParams(searchPram);
-Object.entries(update).forEach(([key , value]) =>{
-   if (value !== null && value !== "" && value !== undefined) {
-      params.set(key ,String(value));
-    } else {
-      params.delete(key);
-    }
-
-    setSearchparam(params);
-})
-
-   
-}
-
+  async function fetchCategories() {
+    try {
+      let { data } = await api.get("/api/categories");
+      setCategories(data);
+      console.log(data);
+    } catch (error) {}
+  }
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   function handelFormatChange(format) {
-    dispatch(setFormat(format));
-   updatepram({format})
+    updatepram({ format });
+    
   }
-  const activeformat = searchPram.get("format") || filters.format;
-  
+  const activeformat = filters.format;
+  const activeCategory = filters.category;
 
   function handeisPaid(entry) {
-    dispatch(setisPaid(entry));
-     updatepram({ isPaid :entry})
+    updatepram({ isPaid: entry });
   }
+
+  const totalcategorieEvent =useMemo(()=>{
+     return categories.reduce((acc, curVal) => {
+    acc += curVal.eventCount;
+    return acc
+  }, 0);
+}, [categories])
 
   return (
     <div className="space-y-4">
@@ -56,7 +55,7 @@ Object.entries(update).forEach(([key , value]) =>{
         </div>
 
         {/* City Filter */}
-        <div className="relative min-w-[150px]">
+        <div className="relative min-w-37.5">
           <span className="text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs">
             📍
           </span>
@@ -95,7 +94,7 @@ Object.entries(update).forEach(([key , value]) =>{
         </div>
 
         {/* Sorting Dropdown */}
-        <div className="relative min-w-[140px]">
+        <div className="relative min-w-35">
           <select
             name="sort"
             className="w-full px-3 py-2 text-xs font-medium rounded-xl bg-[#FAF9F5] border border-[#DDD9CE] focus:border-[#E65100] outline-none text-stone-800 appearance-none cursor-pointer"
@@ -148,73 +147,31 @@ Object.entries(update).forEach(([key , value]) =>{
         {/* All Disciplines Pill */}
         <button
           type="button"
+          onClick={() => updatepram({ category: "" })}
           className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-[#1a1a1a] text-white shadow-sm"
         >
-          <span>All Disciplines</span>
+          <span>All Category</span>
           <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-white/20 text-white">
-            42
+         {totalcategorieEvent}
           </span>
         </button>
 
-        <button
-          type="button"
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
-        >
-          <span>Technology & AI</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500">
-            14
-          </span>
-        </button>
-
-        <button
-          type="button"
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
-        >
-          <span>Live Music & Concerts</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500">
-            9
-          </span>
-        </button>
-
-        <button
-          type="button"
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
-        >
-          <span>Startups & Venture Capital</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500">
-            8
-          </span>
-        </button>
-
-        <button
-          type="button"
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
-        >
-          <span>Fitness & Marathons</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500">
-            5
-          </span>
-        </button>
-
-        <button
-          type="button"
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
-        >
-          <span>Arts & Culture</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500">
-            4
-          </span>
-        </button>
-
-        <button
-          type="button"
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
-        >
-          <span>Workshops & Masterclasses</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500">
-            2
-          </span>
-        </button>
+        {categories.map((cat) => (
+          <button
+            key={cat._id || cat.id}
+            onClick={() => updatepram({ category: cat.name })}
+            type="button"
+className={`px-2.5 py-1 rounded-lg border text-xs font-medium capitalize transition-all cursor-pointer ${
+                activeCategory === cat.name
+                  ? "bg-stone-800 text-white border-stone-800"
+                  : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
+              }`}          >
+            <span>{cat.name}</span>
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500">
+              {cat.eventCount || 0}
+            </span>
+          </button>
+        ))}
       </div>
 
       {/* Format & Pricing Pills */}
@@ -242,7 +199,7 @@ Object.entries(update).forEach(([key , value]) =>{
           <button
             onClick={() => handeisPaid("")}
             type="button"
-             className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
               filters.isPaid === "" || null
                 ? "bg-stone-800 text-white border-stone-800"
                 : "bg-white border-[#DDD9CE] text-stone-600"
@@ -253,21 +210,23 @@ Object.entries(update).forEach(([key , value]) =>{
           <button
             onClick={() => handeisPaid(false)} // isPaid = false+
             type="button"
- className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
               filters.isPaid === false
                 ? "bg-emerald-700 text-white border-emerald-700"
                 : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
-            }`}          >
+            }`}
+          >
             Free
           </button>
           <button
             onClick={() => handeisPaid(true)} // isPaid = true
             type="button"
- className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
               filters.isPaid === true
                 ? "bg-stone-800 text-white border-stone-800"
                 : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
-            }`}          >
+            }`}
+          >
             Paid
           </button>
         </div>
