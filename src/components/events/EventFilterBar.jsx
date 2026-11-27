@@ -5,13 +5,17 @@ import { useEffect, useMemo, useState } from "react";
 export default function EventFilterBar() {
   const { updatepram, serchParam, filters } = useEventFilter();
   const [categories, setCategories] = useState([]);
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState(false);
 
   async function fetchCategories() {
+    setIsCategoriesLoading(true);
     try {
       let { data } = await api.get("/api/categories");
       setCategories(data);
       console.log(data);
-    } catch (error) {}
+    } catch (error) {
+    }      setIsCategoriesLoading(false);
+
   }
   useEffect(() => {
     fetchCategories();
@@ -19,7 +23,6 @@ export default function EventFilterBar() {
 
   function handelFormatChange(format) {
     updatepram({ format });
-    
   }
   const activeformat = filters.format;
   const activeCategory = filters.category;
@@ -28,12 +31,13 @@ export default function EventFilterBar() {
     updatepram({ isPaid: entry });
   }
 
-  const totalcategorieEvent =useMemo(()=>{
-     return categories.reduce((acc, curVal) => {
-    acc += curVal.eventCount;
-    return acc
-  }, 0);
-}, [categories])
+  const totalcategorieEvent = useMemo(() => {
+    return categories.reduce((acc, curVal) => {
+      acc += curVal.eventCount;
+      return acc;
+    }, 0);
+  }, [categories]);
+  console.log(totalcategorieEvent);
 
   return (
     <div className="space-y-4">
@@ -148,26 +152,53 @@ export default function EventFilterBar() {
         <button
           type="button"
           onClick={() => updatepram({ category: "" })}
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-[#1a1a1a] text-white shadow-sm"
+          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 ${
+            activeCategory === ""
+              ? "bg-stone-800 text-white border-stone-800"
+              : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
+          }`}
         >
-          <span>All Category</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-white/20 text-white">
-         {totalcategorieEvent}
-          </span>
+         <span>All Category</span>
+          {!isCategoriesLoading && (
+            <span
+              className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500 ${
+                activeCategory === ""
+                  ? "bg-white/20 text-white"
+                  : "bg-stone-100 text-stone-600"
+              }`}
+            >
+              {totalcategorieEvent}
+            </span>
+           )} 
         </button>
 
-        {categories.map((cat) => (
-          <button
-            key={cat._id || cat.id}
-            onClick={() => updatepram({ category: cat.name })}
-            type="button"
-className={`px-2.5 py-1 rounded-lg border text-xs font-medium capitalize transition-all cursor-pointer ${
-                activeCategory === cat.name
-                  ? "bg-stone-800 text-white border-stone-800"
-                  : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
-              }`}          >
+
+          {isCategoriesLoading
+          ? [...Array(5)].map((_, i) => (
+              <div
+                key={i}
+                className="h-8 w-24 rounded-full bg-stone-200 animate-pulse shrink-0"
+              />
+            ))
+          : categories.map((cat) => (
+              <button
+                key={cat._id || cat.id}
+                type="button"
+                onClick={() => updateParams({ category: cat.name })}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 ${
+                  activeCategory === cat.name
+                    ? "bg-stone-800 text-white border-stone-800"
+                    : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
+                }`}
+              >
             <span>{cat.name}</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500">
+            <span
+              className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500 ${
+                activeCategory === cat.name
+                  ? "bg-white/20 text-white"
+                  : "bg-stone-100 text-stone-600"
+              }`}
+            >
               {cat.eventCount || 0}
             </span>
           </button>

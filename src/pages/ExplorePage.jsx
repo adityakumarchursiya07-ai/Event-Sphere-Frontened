@@ -27,11 +27,13 @@ export default function ExplorePage() {
     } else {
       setIsMoreLoading(true);
     }
-
+ let str = [`${apiQueryString()}` , `page=${page}`].filter(Boolean).join("&")
     // params.set("page", page);
     try {
+
+     
       const { data: events, pagination } = await api.get(
-        `/api/events?${apiQueryString()}&page=${page}`,
+        `/api/events?${str}`,
       );
  
       if (thisRequestId !== activeRequestId.current) {
